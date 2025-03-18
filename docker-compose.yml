@@ -1,0 +1,34 @@
+services:
+  webserver:
+    image: nodeserver:1
+    build: .
+    ports:
+      - 8080:8080
+    # environment:
+    #   - name=value
+
+    # db가 켜진 다음에 실행됨
+    depends_on:
+      - db 
+
+  nginx:
+    image: nginx:1
+    ports:
+      - 80:80
+    
+    # 컨테이너 꺼져도 알아서 재시작
+    restart: always
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+
+# volume 연결하기 위해 등록
+# extrernal true 안하면 새 volume 만들어지니까 유의
+volumes:
+  postgres_vol:
+    external: true
